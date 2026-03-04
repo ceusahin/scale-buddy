@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { analyze } from "@/lib/ai-analysis";
+import { analyze, getSelectionStats } from "@/lib/ai-analysis";
 import { z } from "zod";
 
 const analyzeSchema = z.object({
@@ -29,7 +29,16 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    const result = await analyze(parsed.data);
+    const { voteMatrix, players, modeName } = parsed.data;
+    const playerIds = players.map((p) => p.id);
+    const { selectionByPlayer, totalQuestions } = getSelectionStats(voteMatrix, playerIds);
+    const result = await analyze({
+      voteMatrix,
+      players,
+      modeName,
+      selectionByPlayer,
+      totalQuestions,
+    });
     return NextResponse.json(result);
   } catch (e) {
     console.error(e);
