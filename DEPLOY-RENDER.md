@@ -156,6 +156,16 @@ Bu adımdan sonra uygulama veritabanıyla konuşabilir; admin paneli ve canlı i
 
 ---
 
+## Build hatası logda görünmüyorsa
+
+- **Tam log:** Render’da Build log penceresinde **aşağı kaydırın**. Hata genelde “Creating an optimized production build ...” satırından **sonra** çıkar. “Failed to compile”, “Module not found”, “Cannot find module” gibi satırları arayın. “View full log” veya “Download logs” varsa tam çıktıyı indirip kontrol edin.
+- **Bellek (OOM):** Free tier’da Next.js build bazen belleği aşar ve process sessizce sonlanır (net hata görünmez). Render Dashboard → Web Service → **Environment** bölümüne şu değişkeni ekleyin:
+  - **Key:** `NODE_OPTIONS`
+  - **Value:** `--max-old-space-size=1024`
+  Sonra **Manual Deploy** ile tekrar build alın.
+
+---
+
 ## Önemli Notlar
 
 - **Ücretsiz plan:** Servis bir süre kullanılmazsa uyur; ilk istekte 30–50 saniye uyanma süresi olabilir. WebSocket (Socket.io) uyandıktan sonra normal çalışır.
