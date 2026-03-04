@@ -50,7 +50,7 @@ function ensureConnectedSet(lobbyId: string): Set<string> {
  */
 export function getLiveStats(): { activeLobbies: number; connectedUsers: number } {
   let connectedUsers = 0;
-  for (const set of connectedInLobby.values()) {
+  for (const set of Array.from(connectedInLobby.values())) {
     connectedUsers += set.size;
   }
   return {
@@ -193,7 +193,7 @@ export function attachSocketHandlers(io: Server) {
           selfVoteAllowed: lobby.selfVoteAllowed ?? true,
         });
       }
-      for (const [, s] of io.sockets.sockets) {
+      for (const [, s] of Array.from(io.sockets.sockets)) {
         if (s.data.userId === userIdToKick && s.data.lobbyId === lobbyId) {
           s.data.lobbyId = undefined;
           s.data.userId = undefined;

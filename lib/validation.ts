@@ -9,7 +9,10 @@ export const lobbyCodeSchema = z
 
 import { AVATAR_IDS } from "./avatars";
 
-const avatarIdSchema = z.string().refine((id) => AVATAR_IDS.includes(id), "Geçersiz avatar").optional();
+const avatarIdSchema = z
+  .string()
+  .refine((id) => (AVATAR_IDS as readonly string[]).includes(id), "Geçersiz avatar")
+  .optional();
 
 export const createLobbySchema = z.object({
   nickname: z.string().min(1).max(30).trim(),
