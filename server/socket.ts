@@ -371,7 +371,7 @@ export function attachSocketHandlers(io: Server) {
               voteMatrix,
               playerIds
             );
-            const questionIds = [...new Set(voteMatrix.map((v) => v.questionId))];
+            const questionIds = Array.from(new Set(voteMatrix.map((v) => v.questionId)));
             const questions = questionIds.length
               ? await prisma.question.findMany({
                   where: { id: { in: questionIds } },
