@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build & output
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+
+# Environment (gizli bilgiler)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# Veritabanı (yerel SQLite; production’da ayrı DB kullanın)
+prisma/*.db
+prisma/*.db-journal
+*.db
+*.db-journal
+
+# Logs & debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+logs/
+*.log
+
+# IDE & editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Vercel
+.vercel
+
+# Testing
+coverage/
+.nyc_output
+
+# Turbo / monorepo
+.turbo
+
+# Diğer
+*.pem
+.cache/

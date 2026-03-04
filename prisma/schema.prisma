@@ -1,0 +1,151 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  nickname  String
+  avatarId  String   @default("fox")
+  createdAt DateTime @default(now())
+
+  lobbiesAsLeader Lobby[]           @relation("LobbyLeader")
+  lobbyPlayers    LobbyPlayer[]
+  votesCast       Vote[]            @relation("Voter")
+  votesReceived   Vote[]            @relation("VotedFor")
+}
+
+model Lobby {
+  id              String   @id @default(cuid())
+  code            String   @unique
+  leaderId        String
+  status          String   @default("waiting") // waiting | playing | finished
+  timerEnabled    Boolean  @default(false)
+  timerSeconds    Int?     @default(30)
+  selfVoteAllowed Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  leader  User         @relation("LobbyLeader", fields: [leaderId], references: [id], onDelete: Cascade)
+  players LobbyPlayer[]
+  games   Game[]
+
+  @@index([code])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model LobbyPlayer {
+  id      String @id @default(cuid())
+  lobbyId String
+  userId  String
+
+  lobby Lobby @relation(fields: [lobbyId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([lobbyId, userId])
+  @@index([lobbyId])
+  @@index([userId])
+}
+
+model Category {
+  id       String   @id @default(cuid())
+  name     String
+  isActive Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  questions     Question[]
+  modeCategories ModeCategory[]
+}
+
+model Question {
+  id         String   @id @default(cuid())
+  text       String
+  categoryId String
+  createdAt  DateTime @default(now())
+
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  votes    Vote[]
+
+  @@index([categoryId])
+}
+
+model Mode {
+  id            String   @id @default(cuid())
+  name          String
+  selfVoteAllowed Boolean @default(true)
+  timerEnabled  Boolean  @default(false)
+  timerSeconds  Int?     @default(30)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  categories ModeCategory[]
+  games      Game[]
+}
+
+model ModeCategory {
+  id         String @id @default(cuid())
+  modeId     String
+  categoryId String
+
+  mode     Mode     @relation(fields: [modeId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([modeId, categoryId])
+  @@index([modeId])
+  @@index([categoryId])
+}
+
+model Game {
+  id              String   @id @default(cuid())
+  lobbyId         String
+  modeId          String
+  selfVoteAllowed Boolean  @default(true)
+  timerEnabled    Boolean  @default(false)
+  timerSeconds    Int?     @default(30)
+  createdAt       DateTime @default(now())
+
+  lobby    Lobby   @relation(fields: [lobbyId], references: [id], onDelete: Cascade)
+  mode     Mode    @relation(fields: [modeId], references: [id], onDelete: Cascade)
+  votes    Vote[]
+}
+
+model Vote {
+  id         String @id @default(cuid())
+  gameId     String
+  questionId String
+  voterId    String
+  votedForId String
+
+  game     Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  voter    User     @relation("Voter", fields: [voterId], references: [id], onDelete: Cascade)
+  votedFor User     @relation("VotedFor", fields: [votedForId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, questionId, voterId])
+  @@index([gameId])
+  @@index([questionId])
+  @@index([voterId])
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  passwordHash String
+  createdAt DateTime @default(now())
+}
+
+model Feedback {
+  id        String    @id @default(cuid())
+  type      String    // "suggestion" | "complaint"
+  text      String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([createdAt])
+  @@index([readAt])
+}
