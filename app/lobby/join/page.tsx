@@ -10,7 +10,7 @@ import { DEFAULT_AVATAR_ID } from "@/lib/avatars";
 export default function JoinLobbyPage() {
   const [code, setCode] = useState("");
   const [nickname, setNickname] = useState("");
-  const [avatarId, setAvatarId] = useState(DEFAULT_AVATAR_ID);
+  const [avatarId, setAvatarId] = useState<string>(DEFAULT_AVATAR_ID);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
